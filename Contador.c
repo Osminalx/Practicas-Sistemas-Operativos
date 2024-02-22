@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
+#include <sys/wait.h>
 
 #define NumberOfThreads 10
 #define NumberOfRequest 100
@@ -16,6 +17,7 @@ void *contador(void *);
 
 int main(void){
 	//Configuration
+	printf("Contador de visitas");
 	if((file=fopen(FILENAME,"w"))==NULL){
 		printf("The file could't be created :(");
 		return 0;
@@ -28,20 +30,28 @@ int main(void){
 	//Thread creation
 	for(int i=0; i<NumberOfThreads;i++){
 		pthread_create(&T[i],0,contador,0); 
-		pthread_join(&T[i],0);
 	}
+	for (int j = 0; j < NumberOfThreads; j++)
+	{
+		pthread_join(T[j],0);
+	}
+	wait(NULL);
 	pthread_mutex_destroy(&the_mutex);
 
 }
 
 void *contador(void *id){
 	//Semaphore blocking
-	pthread_mutex_init(&the_mutex,0);
+	
 	for(int i=0;i<NumberOfRequest;i++){
-
-
+	pthread_mutex_lock(&the_mutex);
+	printf("%d",i);
+	int read = read_file();
+	read ++;
+	write_file(read);
+	pthread_mutex_unlock(&the_mutex);
 	}
-	pthread_mutex_destroy(&the_mutex);
+	pthread_exit(NULL);
 }
 
 
@@ -61,7 +71,7 @@ int write_file(int c){
 		printf("The file could't be created :(");
 		return -1;
 	}
-	fprintf(file,",%d",c);
+	fprintf(file,"%d",c);
 	fclose(file);
 	return 1;
 }
