@@ -1,7 +1,6 @@
 section .data
 msg:  db 'Entrandoal loop',10
 ms1: equ $-msg
-ptr: db 
 
     section .text
     global _start    
@@ -26,7 +25,7 @@ ciclo:
     mov eax,[con]
     sub eax,48
     mov [con],eax
-    
+
     mov ecx,[con]
     dec ecx
     jnz ciclo
