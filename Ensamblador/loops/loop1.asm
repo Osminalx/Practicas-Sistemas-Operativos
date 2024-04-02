@@ -1,5 +1,5 @@
 section .data
-msg:  db 'Entrandoal loop',10
+msg:  db 'Entrando al  loop',10
 ms1: equ $-msg
 
     section .text
