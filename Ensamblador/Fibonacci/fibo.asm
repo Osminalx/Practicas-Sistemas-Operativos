@@ -15,6 +15,7 @@ fib:
     dec ecx
     cmp ecx,1
     jg fib
+    mov [bas1],eax
     ;imprimir
     mov ebx,100
     mov ecx,0
