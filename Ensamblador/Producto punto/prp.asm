@@ -1,39 +1,54 @@
 section .data
-    matrix1 dq 1, 2, 3, 4         ; Matriz 1: [1, 2, 3, 4]
-    matrix2 dq 5, 6, 7, 8         ; Matriz 2: [5, 6, 7, 8]
-    result dq 0                    ; Variable para almacenar el resultado
-    result_format db "El producto punto es: %lf", 10, 0  ; Formato para imprimir el resultado
+    ve1: dd 1,2,3
+    ve2: dd 2,2,1
 
 section .text
-    extern printf                   ; Declaración externa de la función printf
-
     global _start
 
 _start:
-    mov rsi, matrix1               ; Dirección de inicio de la matriz 1
-    mov rdi, matrix2               ; Dirección de inicio de la matriz 2
-    mov rcx, 4                     ; Número de elementos en las matrices (4 en este caso)
+    mov ebx,ve1 
+    mov edx,ve2
+    mov ecx,1
+    mov eax,0
+    mov [sum],eax ;se inicializa el resultado
+loop:
+    mov [con],ecx
+    mov eax,[ebx] ;Elemento del vec1
+    mov ecx,[edx] ;Elemento del vec2
+    mul ecx
+    ; Se suma al resultado
+    mov ebx,[sum]
+    add eax,ebx
+    mov [sum],eax
+    ; Se mueve la dirección 4 unidades cada ciclo, i.e. 4,8,12,...
+    mov ecx,[con]
+    mov eax,4
+    mul ecx
 
-    xorpd xmm0, xmm0               ; Limpiar el registro xmm0 para almacenar el resultado
+    mov ebx,ve1
+    add ebx,eax 
+    mov edx,ve2
+    add edx,eax
 
-dot_product_loop:
-    movsd xmm1, [rsi]              ; Cargar el primer elemento de la matriz 1 en xmm1
-    movsd xmm2, [rdi]              ; Cargar el primer elemento de la matriz 2 en xmm2
-    mulsd xmm1, xmm2               ; Multiplicar los elementos
-    addsd xmm0, xmm1               ; Sumar el resultado al acumulador en xmm0
+    inc ecx
+    cmp ecx,3
+    jle loop
 
-    add rsi, 8                     ; Avanzar a siguiente elemento de la matriz 1 (8 bytes)
-    add rdi, 8                     ; Avanzar a siguiente elemento de la matriz 2 (8 bytes)
-    loop dot_product_loop          ; Repetir para el siguiente elemento
+    ;imprimir el resultado
+    mov eax,[sum]
+    add eax,'0'
+    mov [sum],eax
 
-    movsd [result], xmm0           ; Almacenar el resultado en la variable result
+    mov eax,4
+    mov ebx,1
+    mov ecx,sum
+    mov edx,1
+    int 0x80
 
-    ; Llamada a printf para imprimir el resultado
-    mov rdi, result_format         ; Dirección del formato de la cadena
-    movq xmm0, [result]            ; Cargar el resultado en xmm0 para imprimirlo como argumento flotante
-    call printf                    ; Llamar a la función printf
+    mov eax,1
+    mov ebx,0
+    int 0x80
 
-    ; Código de salida
-    mov rax, 60                    ; Código de salida para sys_exit
-    xor rdi, rdi                   ; Código de salida 0
-    syscall
+section .bss
+    sum resd 1
+    con resd 1

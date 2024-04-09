@@ -17,27 +17,8 @@ fib:
     jg fib
     mov [bas1],eax
     ;imprimir
-    mov ebx,100
-    mov ecx,0
-converloop:
-    mov edx,0
-    div ebx
-    add dl,'0'
-    mov [esp + ecx],dl
-    inc ecx
-    cmp eax,0
-    jnz converloop
-
-;imprimir digitos
-    mov edx,ecx
-    mov ecx,esp
-    mov ebx,1
-    mov eax,4
+imploop:
+    mov eax,[bas1]
+    div 100
+    mov ebx,eax
     
-    mov eax,1
-    mov ebx,0
-    int 0x80
-    
-
-
-
