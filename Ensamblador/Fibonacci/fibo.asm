@@ -18,7 +18,20 @@ fib:
     mov [bas1],eax
     ;imprimir
 imploop:
+    ;imprimir centenas
     mov eax,[bas1]
     div 100
-    mov ebx,eax
+    mul 100
+    mov ebx,[bas1]
+    sub ebx,eax
+    mov [bas1],ebx
+    mov edx,eax
+    ;Impresión primer digito
+    mov eax,4
+    mov ebx,1
+    mov ecx,edx
+    ;Imprimir decenas
+    mov eax,
+    div 10
+    sub eax,edx
     
