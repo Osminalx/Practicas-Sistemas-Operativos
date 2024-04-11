@@ -1,6 +1,9 @@
 section .data
-    ve1: dd 1,2,3
+    ve1: dd 2,2,3
     ve2: dd 2,2,1
+    divider: dd 0
+    cont:dd 0
+    final:dd 0
 
 section .text
     global _start
@@ -35,10 +38,44 @@ loop:
     jle loop
 
     ;imprimir el resultado
+flags:
+    mov ecx,100
+    mov [divider],ecx
+    mov ecx,0
+    mov ecx,3
+print:
+    ;contador
+    mov[cont],ecx
+    mov edx,0
+    mov eax,0
+    ;division
     mov eax,[sum]
+    mov ebx,[divider]
+    div ebx
+    ;preparar impresion
+    mov [sum],edx
     add eax,'0'
-    mov [sum],eax
+    mov [final],eax
+    ;impresion
+    mov eax,4
+    mov ebx,1
+    mov ecx,final
+    mov edx,1
+    int 0x80
+    ;actualizar division
+    mov edx,0
+    mov ebx,10
+    mov eax,[divider]
+    div ebx
+    mov [divider],eax
+    ;actualizar contador
+    mov ecx,[cont]
+    dec ecx
+    jnz print
 
+    mov eax,1
+    mov ebx,0
+    int 0x80
 
 section .bss
     sum resd 1
